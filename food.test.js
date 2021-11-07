@@ -53,7 +53,7 @@ describe('Food tests', () => {
         const getResponseBody = JSON.parse(getResponse.body)
         expect(getResponseBody).toEqual(pizza)
     })
-    it('returns error 404 for non-existent food', async () => {
+    it('returns error 404 for non-existent food with GET', async () => {
         const getResponse = await client.get('/api/food/alma')
         expect(getResponse.code).toBe(404)
     })
@@ -75,5 +75,10 @@ describe('Food tests', () => {
 
         const getResponseBody = JSON.parse(getResponse.body)
         expect(getResponseBody).toEqual(barack)
+    })
+    it('returns error 404 for non-existent food with PUT', async () => {
+        let alma = {'name': 'alma', 'calories': 80}
+        const getResponse = await client.put('/api/food/alma', alma)
+        expect(getResponse.code).toBe(404)
     })
 })
