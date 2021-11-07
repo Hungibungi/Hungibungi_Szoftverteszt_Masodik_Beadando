@@ -81,4 +81,15 @@ describe('Food tests', () => {
         const getResponse = await client.put('/api/food/alma', alma)
         expect(getResponse.code).toBe(404)
     })
+    it('can delete food', async () => {
+        let korte = {'name': 'körte', 'calories': 120}
+        const postResponse = await client.post('/api/food', korte)
+        korte.id = JSON.parse(postResponse.body).id
+
+        const deleteResponse = await client.delete('/api/food/' + korte.id)
+        expect(deleteResponse.code).toBe(204)
+
+        const getResponse = await client.get('/api/food')
+        expect(JSON.parse(getResponse.body)).toEqual(expect.not.arrayContaining([korte]))
+    })
 })
