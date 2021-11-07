@@ -92,4 +92,8 @@ describe('Food tests', () => {
         const getResponse = await client.get('/api/food')
         expect(JSON.parse(getResponse.body)).toEqual(expect.not.arrayContaining([korte]))
     })
+    it('returns error 404 for non-existent food with DELETE', async () => {
+        const getResponse = await client.delete('/api/food/alma')
+        expect(getResponse.code).toBe(404)
+    })
 })
