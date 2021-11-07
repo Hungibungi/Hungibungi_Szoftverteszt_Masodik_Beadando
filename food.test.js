@@ -40,4 +40,17 @@ describe('Food tests', () => {
         expect(getResponseBody).toContainEqual(torta)
         expect(getResponseBody).toContainEqual(pacal)
     })
+    it('can read food', async () => {
+        const pizza = {'name': 'pizza', 'calories': 1500}
+
+        const postResponse = await client.post('/api/food', pizza)
+        const pizzaId = JSON.parse(postResponse.body).id
+
+        const getResponse = await client.get('/api/food/' + pizzaId)
+        expect(getResponse.code).toBe(200)
+        pizza.id = pizzaId
+
+        const getResponseBody = JSON.parse(getResponse.body)
+        expect(getResponseBody).toEqual(pizza)
+    })
 })
