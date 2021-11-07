@@ -21,7 +21,7 @@ describe('Food tests', () => {
 
         expect(postResponse.code).toBe(400)
     })
-    it('can return created foods and get 200 error', async () => {
+    it('can return created foods and get code 200', async () => {
         let torta = {'name': 'torta', 'calories': 1200}
         let pacal = {'name': 'pacal', 'calories': 1800}
 
@@ -40,7 +40,7 @@ describe('Food tests', () => {
         expect(getResponseBody).toContainEqual(torta)
         expect(getResponseBody).toContainEqual(pacal)
     })
-    it('can read food and get 200 error', async () => {
+    it('can read food and get code 200', async () => {
         let pizza = {'name': 'pizza', 'calories': 1500}
 
         const postResponse = await client.post('/api/food', pizza)
@@ -53,11 +53,11 @@ describe('Food tests', () => {
         const getResponseBody = JSON.parse(getResponse.body)
         expect(getResponseBody).toEqual(pizza)
     })
-    it('returns error 404 for non-existent food with GET', async () => {
+    it('returns error 404 for GET if the foodId does not exist', async () => {
         const getResponse = await client.get('/api/food/alma')
         expect(getResponse.code).toBe(404)
     })
-    it ('can update food and get 200 error', async () => {
+    it ('can update food and get code 200', async () => {
         let barack = {'name': 'barack', 'calories': 100}
 
         const postResponse = await client.post('/api/food', barack)
@@ -76,12 +76,12 @@ describe('Food tests', () => {
         const getResponseBody = JSON.parse(getResponse.body)
         expect(getResponseBody).toEqual(barack)
     })
-    it('returns error 404 for non-existent food with PUT', async () => {
+    it('returns error 404 for PUT if the foodId does not exist', async () => {
         let alma = {'name': 'alma', 'calories': 80}
         const getResponse = await client.put('/api/food/alma', alma)
         expect(getResponse.code).toBe(404)
     })
-    it('can delete food', async () => {
+    it('can delete food and get code 204', async () => {
         let korte = {'name': 'körte', 'calories': 120}
         const postResponse = await client.post('/api/food', korte)
         korte.id = JSON.parse(postResponse.body).id
@@ -92,8 +92,21 @@ describe('Food tests', () => {
         const getResponse = await client.get('/api/food')
         expect(JSON.parse(getResponse.body)).toEqual(expect.not.arrayContaining([korte]))
     })
-    it('returns error 404 for non-existent food with DELETE', async () => {
+    it('returns error 404 for DELETE if the foodId does not exist', async () => {
         const getResponse = await client.delete('/api/food/alma')
         expect(getResponse.code).toBe(404)
+    })
+    it ('returns error 400 for PUT if the body and url foodId does not match', async () => {
+        let barack = {'name': 'barack', 'calories': 100}
+
+        const postResponse = await client.post('/api/food', barack)
+        const barackId = JSON.parse(postResponse.body).id
+        barack.id = barackId
+
+        barack.name = 'Barack'
+        barack.calories = 69
+        barack.id = "asd"
+        const putResponse = await client.put('/api/food/' + barackId, barack)
+        expect(putResponse.code).toBe(400)
     })
 })
