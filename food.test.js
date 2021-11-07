@@ -53,4 +53,8 @@ describe('Food tests', () => {
         const getResponseBody = JSON.parse(getResponse.body)
         expect(getResponseBody).toEqual(pizza)
     })
+    it('returns error for non-existent food', async () => {
+        const getResponse = await client.get('/api/food/alma')
+        expect(getResponse.code).toBe(404)
+    })
 })
