@@ -21,4 +21,23 @@ describe('Food tests', () => {
 
         expect(postResponse.code).toBe(400)
     })
+    it('can return created foods', async () => {
+        let torta = {'name': 'torta', 'calories': 1200}
+        let pacal = {'name': 'pacal', 'calories': 1800}
+
+        const tortaResponse = await client.post('/api/food', torta)
+        const tortaId = JSON.parse(tortaResponse.body).id
+        const pacalResponse = await client.post('/api/food', pacal)
+        const pacalId = JSON.parse(pacalResponse.body).id
+
+        const getResponse = await client.get('/api/food')
+        expect(getResponse.code).toBe(200)
+
+        const getResponseBody = JSON.parse(getResponse.body)
+        torta.id = tortaId
+        pacal.id = pacalId
+
+        expect(getResponseBody).toContainEqual(torta)
+        expect(getResponseBody).toContainEqual(pacal)
+    })
 })
