@@ -96,15 +96,12 @@ describe('Food tests', () => {
         const getResponse = await client.delete('/api/food/alma')
         expect(getResponse.code).toBe(404)
     })
-    it ('returns error 400 for PUT if the body and url foodId does not match', async () => {
+    it('returns error 400 for PUT if the body and url foodId does not match', async () => {
         let barack = {'name': 'barack', 'calories': 100}
 
         const postResponse = await client.post('/api/food', barack)
         const barackId = JSON.parse(postResponse.body).id
-        barack.id = barackId
 
-        barack.name = 'Barack'
-        barack.calories = 69
         barack.id = "asd"
         const putResponse = await client.put('/api/food/' + barackId, barack)
         expect(putResponse.code).toBe(400)
