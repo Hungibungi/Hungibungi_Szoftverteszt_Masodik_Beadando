@@ -9,19 +9,19 @@ const client = require('./client')('localhost', 8000)
  */
 
 describe('Food tests', () => {
-    it('returns error for missing food name', async () => {
+    it('returns error 400 for missing food name', async () => {
 
         const postResponse = await client.post('/api/food', {'calories': 1})
 
         expect(postResponse.code).toBe(400)
     })
-    it('returns error for negative calories', async () => {
+    it('returns error 400 for negative calories', async () => {
 
         const postResponse = await client.post('/api/food', {'calories': -1})
 
         expect(postResponse.code).toBe(400)
     })
-    it('can return created foods', async () => {
+    it('can return created foods and get 200 error', async () => {
         let torta = {'name': 'torta', 'calories': 1200}
         let pacal = {'name': 'pacal', 'calories': 1800}
 
@@ -40,8 +40,8 @@ describe('Food tests', () => {
         expect(getResponseBody).toContainEqual(torta)
         expect(getResponseBody).toContainEqual(pacal)
     })
-    it('can read food', async () => {
-        const pizza = {'name': 'pizza', 'calories': 1500}
+    it('can read food and get 200 error', async () => {
+        let pizza = {'name': 'pizza', 'calories': 1500}
 
         const postResponse = await client.post('/api/food', pizza)
         const pizzaId = JSON.parse(postResponse.body).id
@@ -53,8 +53,27 @@ describe('Food tests', () => {
         const getResponseBody = JSON.parse(getResponse.body)
         expect(getResponseBody).toEqual(pizza)
     })
-    it('returns error for non-existent food', async () => {
+    it('returns error 404 for non-existent food', async () => {
         const getResponse = await client.get('/api/food/alma')
         expect(getResponse.code).toBe(404)
+    })
+    it ('can update food and get 200 error', async () => {
+        let barack = {'name': 'barack', 'calories': 100}
+
+        const postResponse = await client.post('/api/food', barack)
+        const barackId = JSON.parse(postResponse.body).id
+        barack.id = barackId
+
+        barack.name = 'Barack'
+        barack.calories = 69
+        const putResponse = await client.put('/api/food/' + barackId, barack)
+        expect(putResponse.code).toBe(200)
+
+        const getResponse = await client.get('/api/food/' + barackId)
+        expect(getResponse.code).toBe(200)
+        barack.id = barackId
+
+        const getResponseBody = JSON.parse(getResponse.body)
+        expect(getResponseBody).toEqual(barack)
     })
 })
